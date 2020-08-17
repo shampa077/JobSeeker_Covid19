@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run uber_pickup.py
+web: streamlit run uber_pickup.py
