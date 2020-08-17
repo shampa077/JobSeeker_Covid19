@@ -4,3 +4,4 @@ django-heroku
 streamlit
 pandas
 numpy
+xlrd
