@@ -7,4 +7,10 @@ echo "\
 [server]\n\
 headless = true\n\
 enableCORS=false\n\
-port = $PORT\n\"
+port = 8501\n\ 
+" >> ~/.streamlit/credentials.toml
+
+echo "\
+[browser]\n\
+gatherUsageStats=false\n\
+" >> ~/.streamlit/credentials.toml
