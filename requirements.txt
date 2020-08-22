@@ -1,7 +1,4 @@
-django
-gunicorn
-django-heroku
+numpy==1.15.0
+pandas==0.23.4
 streamlit==0.60.0
-pandas
-numpy
-xlrd
+xlrd==1.2.0
