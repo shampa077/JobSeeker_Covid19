@@ -1,7 +1,7 @@
 django
 gunicorn
 django-heroku
-streamlit==0.49.0
+streamlit==0.60.0
 pandas
 numpy
 xlrd
