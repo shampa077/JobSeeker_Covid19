@@ -7,6 +7,23 @@ import matplotlib.pyplot as plt
 
 st.title('JobSeeker in Australia')
 
+def plot_map(df,title):
+    #gdf.plot(ax=ax, color='red')
+    max_v=df['JobSeeker Payment'].max()
+    #title="Heat Map of Job Seeker Payment may 2020"
+    fig, ax = plt.subplots(1, figsize=(40, 20))
+    ax.axis('off')
+    ax.set_title(title, fontdict={'fontsize': '40', 'fontweight' : '3'})
+    color = 'Oranges'
+    vmin, vmax = 0, 231
+    sm = plt.cm.ScalarMappable(cmap=color, norm=plt.Normalize(vmin=0, vmax=max_v))
+    sm._A = []
+    cbar = fig.colorbar(sm)
+    cbar.ax.tick_params(labelsize=20)
+    if len(df)>0:
+        df.plot('JobSeeker Payment', cmap=color, linewidth=0.8, ax=ax, edgecolor='0.8', figsize=(40,20))
+
+
 # @st.cache
 # def load_data():
 #     aus_lgas = pd.read_excel('Data/AUS_LGA.xlsx')
@@ -86,6 +103,10 @@ df_jobseeker_count=aus_sa2.merge(df_jobseeker_count,right_on='SA2',left_on="SA2_
 
 #df_jobseeker_count["coords"] = np.where(df_jobseeker_count.geometry.isnull(),(0,0), 
  #list(df_jobseeker_count.geometry.centroid.coords)[0])
+ 
+df_jobseeker_count["coords"]=df_jobseeker_count.geometry
+ 
+df_jobseeker_count["coords"].apply(lambda x: (x.centroid.coords.xy[0][0],x.centroid.coords.xy[1][0]) if x is not None else (0,0))
 df = pd.DataFrame(
     {'City': ['Buenos Aires', 'Brasilia', 'Santiago', 'Bogota', 'Caracas'],
      'Country': ['Argentina', 'Brazil', 'Chile', 'Colombia', 'Venezuela'],
@@ -101,6 +122,8 @@ gdf = geopandas.GeoDataFrame(
     df_postcode, geometry=geopandas.points_from_xy(df_postcode.lng, df_postcode.lat))
 st.write(gdf.head())
 
+plot_map(df_jobseeker_count,"Heat Map of Job Seeker Payment may 2020 Australia")
+st.pyplot(legend=True)
 # Create a list of possible values and multiselect menu with them in it.
 state = df_jobseeker_count.STE_NAME16.unique()
 state_SELECTED = st.multiselect('Select State', state)
@@ -116,6 +139,7 @@ if len(data)>0:
     mask_sa2 = data['SA4_NAME16'].isin(SA2_SELECTED)
 
     data = data[mask_sa2]
+plot_map(data,"Heat Map of Job Seeker Payment may 2020 SA2")
 #hour_to_filter = st.slider('Count',5, int(np.max(df_jobseeker_count["JobSeeker Payment"])), 10)
 
 #filtered_data = df_jobseeker_count[df_jobseeker_count["JobSeeker Payment"] == hour_to_filter]
@@ -125,31 +149,17 @@ if len(data)>0:
 #     color='white', edgecolor='black')
 # =============================================================================
 
-ax = df_jobseeker_count.plot(
-   colormap='jet', edgecolor='black',column='JobSeeker Payment')
+#ax = df_jobseeker_count.plot(
+#   colormap='jet', edgecolor='black',column='JobSeeker Payment')
 
 #.legend(loc='center left',bbox_to_anchor=(1.0, 0.5))
 #ax.legend(scatterpoints=1, frameon=False, labelspacing=1, title='JobSeeker Payment Count')
 
-#gdf.plot(ax=ax, color='red')
-max_v=data['JobSeeker Payment'].max()
-title="Heat Map of Job Seeker Payment may 2020"
-fig, ax = plt.subplots(1, figsize=(40, 20))
-ax.axis('off')
-ax.set_title(title, fontdict={'fontsize': '40', 'fontweight' : '3'})
-color = 'Oranges'
-vmin, vmax = 0, 231
-sm = plt.cm.ScalarMappable(cmap=color, norm=plt.Normalize(vmin=0, vmax=max_v))
-sm._A = []
-cbar = fig.colorbar(sm)
-cbar.ax.tick_params(labelsize=20)
-if len(data)>0:
-    data.plot('JobSeeker Payment', cmap=color, linewidth=0.8, ax=ax, edgecolor='0.8', figsize=(40,20))
 
 
 #for idx, row in data.iterrows():
-#    plt.annotate(s=row['SA3_NAME16'], xy=row['coords'],
-#                 horizontalalignment='center')
+ #   plt.annotate(s=row['SA3_NAME16'], xy=row['coords'],
+  #               horizontalalignment='center')
 #plt.show()
 st.pyplot(legend=True)
 
